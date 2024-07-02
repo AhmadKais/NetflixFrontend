@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netflix-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netflix-frontend
+  template:
+    metadata:
+      labels:
+        app: netflix-frontend
+    spec:
+      containers:
+      - name: netflix-frontend
+        image: ghalebb/netflix_front:0.0.3
+        ports:
+        - containerPort: 3000
+        env:
+        - name: MOVIE_CATALOG_SERVICE
+          value: "http://netflix-movie-catalog:8080"
+        - name: REDIS_URL
+          value: "redis:6379"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
