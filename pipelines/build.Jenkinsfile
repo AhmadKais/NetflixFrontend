@@ -24,10 +24,12 @@ pipeline {
         stage('Docker setup') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASS')]) {
-                        sh '''
-                          docker login -u $DOCKER_USERNAME -p $DOCKER_PASS
-                        '''
+                    docker.image('docker:latest').inside {
+                        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASS')]) {
+                            sh '''
+                              docker login -u $DOCKER_USERNAME -p $DOCKER_PASS
+                            '''
+                        }
                     }
                 }
             }
@@ -36,13 +38,15 @@ pipeline {
         stage('Build & Push') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASS')]) {
-                        sh '''
-                          IMAGE_FULL_NAME=$DOCKER_USERNAME/$IMAGE_BASE_NAME:$IMAGE_TAG
+                    docker.image('docker:latest').inside {
+                        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASS')]) {
+                            sh '''
+                              IMAGE_FULL_NAME=$DOCKER_USERNAME/$IMAGE_BASE_NAME:$IMAGE_TAG
 
-                          docker build -t $IMAGE_FULL_NAME .
-                          docker push $IMAGE_FULL_NAME
-                        '''
+                              docker build -t $IMAGE_FULL_NAME .
+                              docker push $IMAGE_FULL_NAME
+                            '''
+                        }
                     }
                 }
             }
