@@ -4,7 +4,7 @@ pipeline {
     }
 
     triggers {
-        githubPush()   // trigger the pipeline when push event in github
+        githubPush()   // trigger the pipeline when push event in githubkjhk
     }
 
     options {
