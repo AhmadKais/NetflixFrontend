@@ -1,5 +1,5 @@
 # Netflix 
-
+this will be with us for the end of the course
 A simple Netflix Clone made using [Next.js](https://nextjs.org/).
 
 
